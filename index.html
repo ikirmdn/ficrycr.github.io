@@ -189,22 +189,33 @@
         </div>
         <div class="row justify-content-center">
           <div class="col-md-6">
-           <form>
-            <div class="mb-3">
-              <label for="name" class="form-label text-white">Nama Lengkap</label>
-              <input type="text" class="form-control" id="name" aria-describedby="name">
+            <div class="alert alert-success alert-dismissible fade show d-none my-alert" role="alert">
+              <strong>Terimakasih!</strong> Pesan anda telah kami terima.
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-            <div class="mb-3">
-              <label for="email" class="form-label text-white">Email</label>
-              <input type="email" class="form-control" id="email" aria-describedby="email">
-            </div>
-            <div class="mb-3">
-              <label for="pesan" class="form-label text-white">Pesan</label>
-              <textarea class="form-control" id="pesan" rows="3"></textarea>
-            </div>
-            <center><button type="submit" class="btn btn-primary"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-save" viewBox="0 0 16 16">
-                    <path d="M2 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H9.5a1 1 0 0 0-1 1v7.293l2.646-2.647a.5.5 0 0 1 .708.708l-3.5 3.5a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L7.5 9.293V2a2 2 0 0 1 2-2H14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h2.5a.5.5 0 0 1 0 1H2z"/>
-                </svg> Kirim</button></center> 
+            <form name="contact-form">
+              <div class="mb-3">
+                <label for="name" class="form-label text-white">Nama Lengkap</label>
+                <input type="text" class="form-control" id="name" aria-describedby="name" name="nama">
+              </div>
+              <div class="mb-3">
+                <label for="email" class="form-label text-white">Email</label>
+                <input type="email" class="form-control" id="email" aria-describedby="email" name="email">
+              </div>
+              <div class="mb-3">
+                <label for="pesan" class="form-label text-white">Pesan</label>
+                <textarea class="form-control" id="pesan" rows="3" name="pesan"></textarea>
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-kirim"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-save" viewBox="0 0 16 16">
+                      <path d="M2 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H9.5a1 1 0 0 0-1 1v7.293l2.646-2.647a.5.5 0 0 1 .708.708l-3.5 3.5a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L7.5 9.293V2a2 2 0 0 1 2-2H14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h2.5a.5.5 0 0 1 0 1H2z"/>
+                  </svg> Kirim</button>
+
+              <button class="btn btn-primary btn-loading d-none" type="button" disabled>
+                <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                Loading...
+              </button>
+            </form>
           </div>
         </div>
       </div>
@@ -229,6 +240,36 @@
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <script>
       AOS.init();
+    </script>
+
+    <script>
+      const scriptURL = 'https://script.google.com/macros/s/AKfycbyJPQS2-Nl8-M3HHObqzwGzvZ0WE1gfmgLDJmxR4I9Uq4l7JKKPCqPrRtxFff9gIUuK/exec'
+      const form = document.forms['contact-form'];
+      const btnKirim = document.querySelector('.btn-kirim');
+      const btnLoading = document.querySelector('.btn-loading');
+      const myAlert = document.querySelector('.my-alert');
+
+      form.addEventListener('submit', e => {
+        e.preventDefault();
+        // ketika tombol submit diklik
+        // tampilkan tombol loading, hilangkan tombol kirim
+        btnLoading.classList.toggle('d-none');
+        btnKirim.classList.toggle('d-none');
+
+
+        fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+          .then(response => {
+            // tampilkan tombol kirim, hilangkan tombol loading
+            btnLoading.classList.toggle('d-none');
+            btnKirim.classList.toggle('d-none');
+            // tampilkan alert
+            myAlert.classList.toggle('d-none');
+            // reset form
+            form.reset();
+            console.log('Success!', response)
+          })
+          .catch(error => console.error('Error!', error.message));
+      });
     </script>
 
 </body>
